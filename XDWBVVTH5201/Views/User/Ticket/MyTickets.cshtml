@@ -1,0 +1,216 @@
+﻿@model IEnumerable<CinemaTest.Models.User.Ticket>
+@{
+    ViewData["Title"] = "Vé của tôi";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">🎫 Vé của tôi</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            <h5>Bạn chưa đặt vé nào.</h5>
+            <p class="mb-0">Hãy khám phá các bộ phim đang chiếu và đặt vé ngay!</p>
+            <a href="@Url.Action("Index", "Home")" class="btn btn-primary mt-3">Xem phim đang chiếu</a>
+        </div>
+    }
+    else
+    {
+        <div class="mb-3">
+            <ul class="nav nav-tabs" id="ticketTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="upcoming-tab" data-bs-toggle="tab" data-bs-target="#upcoming" type="button" role="tab">
+                        Sắp tới
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="past-tab" data-bs-toggle="tab" data-bs-target="#past" type="button" role="tab">
+                        Đã qua
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tab-content" id="ticketTabsContent">
+            <div class="tab-pane fade show active" id="upcoming" role="tabpanel">
+                <div class="row">
+                    @{
+                        var upcomingTickets = Model.Where(t => t.Showtime != null && t.Showtime.StartTime > DateTime.Now).ToList();
+
+                        if (!upcomingTickets.Any())
+                        {
+                            <div class="col-12">
+                                <div class="alert alert-info text-center">
+                                    Bạn không có vé nào sắp tới.
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            foreach (var ticket in upcomingTickets)
+                            {
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100 shadow-sm">
+                                        <div class="row g-0">
+                                            <div class="col-md-4">
+                                                @if (ticket.Showtime?.Movie?.PosterUrl != null)
+                                                {
+                                                    <img src="~/posters/@ticket.Showtime.Movie.PosterUrl" class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="Movie Poster">
+                                                }
+                                                else
+                                                {
+                                                    <div class="bg-light d-flex align-items-center justify-content-center h-100">
+                                                        <span class="text-muted">Không có ảnh</span>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">@(ticket.Showtime?.Movie?.Title ?? "Không có tên phim")</h5>
+                                                    <p class="card-text mb-1">
+                                                        @if (ticket.Showtime?.Movie != null)
+                                                        {
+                                                            <small class="text-muted">@ticket.Showtime.Movie.Genre | @ticket.Showtime.Movie.Duration phút</small>
+                                                        }
+                                                    </p>
+                                                    <p class="card-text mb-1"><strong>Mã vé:</strong> @ticket.TicketCode</p>
+                                                    <p class="card-text mb-1"><strong>Phòng:</strong> @(ticket.Showtime?.Room?.Name ?? "Không có thông tin")</p>
+                                                    <p class="card-text mb-1"><strong>Ghế:</strong> @ticket.SeatNumber</p>
+                                                    <p class="card-text mb-1"><strong>Suất chiếu:</strong> @(ticket.Showtime != null ? ticket.Showtime.StartTime.ToString("HH:mm dd/MM/yyyy") : "Không có thông tin")</p>
+                                                    <p class="card-text">
+                                                        <span class="badge bg-success">@ticket.Status</span>
+                                                    </p>
+                                                    <a href="#" class="btn btn-sm btn-outline-primary" onclick="showQRCode('@ticket.TicketCode')">
+                                                        <i class="fas fa-qrcode me-1"></i> Hiển thị QR
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="past" role="tabpanel">
+                <div class="row">
+                    @{
+                        // Sửa cách lọc vé đã qua, đảm bảo an toàn với null
+                        var pastTickets = Model.Where(t => t.Showtime != null && t.Showtime.StartTime <= DateTime.Now).ToList();
+
+                        if (!pastTickets.Any())
+                        {
+                            <div class="col-12">
+                                <div class="alert alert-info text-center">
+                                    Bạn không có vé nào đã qua.
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            foreach (var ticket in pastTickets)
+                            {
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100 shadow-sm">
+                                        <div class="row g-0">
+                                            <div class="col-md-4">
+                                                @if (ticket.Showtime?.Movie?.PosterUrl != null)
+                                                {
+                                                    <img src="~/posters/@ticket.Showtime.Movie.PosterUrl" class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="Movie Poster">
+                                                }
+                                                else
+                                                {
+                                                    <div class="bg-light d-flex align-items-center justify-content-center h-100">
+                                                        <span class="text-muted">Không có ảnh</span>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">@(ticket.Showtime?.Movie?.Title ?? "Không có tên phim")</h5>
+                                                    <p class="card-text mb-1">
+                                                        @if (ticket.Showtime?.Movie != null)
+                                                        {
+                                                            <small class="text-muted">@ticket.Showtime.Movie.Genre | @ticket.Showtime.Movie.Duration phút</small>
+                                                        }
+                                                    </p>
+                                                    <p class="card-text mb-1"><strong>Mã vé:</strong> @ticket.TicketCode</p>
+                                                    <p class="card-text mb-1"><strong>Phòng:</strong> @(ticket.Showtime?.Room?.Name ?? "Không có thông tin")</p>
+                                                    <p class="card-text mb-1"><strong>Ghế:</strong> @ticket.SeatNumber</p>
+                                                    <p class="card-text mb-1"><strong>Suất chiếu:</strong> @(ticket.Showtime != null ? ticket.Showtime.StartTime.ToString("HH:mm dd/MM/yyyy") : "Không có thông tin")</p>
+                                                    <p class="card-text">
+                                                        <span class="badge bg-secondary">Đã qua</span>
+                                                    </p>
+                                                    @if (ticket.Showtime?.MovieId != null)
+                                                    {
+                                                        <a href="#" class="btn btn-sm btn-outline-secondary" onclick="rateMovie(@ticket.Showtime.MovieId)">
+                                                            <i class="fas fa-star me-1"></i> Đánh giá phim
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Modal hiển thị QR code -->
+<div class="modal fade" id="qrCodeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Mã QR vé</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div id="qrcode" class="mb-3"></div>
+                <p>Sử dụng mã QR này để check-in tại rạp</p>
+                <p class="mb-0"><strong>Mã vé: </strong><span id="ticketCodeDisplay"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Thêm thư viện QR Code -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode.js/qrcode.min.js"></script>
+
+<script>
+    function showQRCode(ticketCode) {
+        // Hiển thị mã vé
+        document.getElementById('ticketCodeDisplay').textContent = ticketCode;
+
+        // Tạo QR code
+        const qrDiv = document.getElementById('qrcode');
+        qrDiv.innerHTML = ''; // Xóa nội dung cũ
+
+        new QRCode(qrDiv, {
+            text: ticketCode,
+            width: 200,
+            height: 200,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
+        // Hiển thị modal
+        new bootstrap.Modal(document.getElementById('qrCodeModal')).show();
+    }
+
+    function rateMovie(movieId) {
+        // Sẽ triển khai sau khi có chức năng đánh giá phim
+        alert('Chức năng đánh giá phim đang được phát triển.');
+    }
+</script>

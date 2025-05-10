@@ -1,0 +1,139 @@
+﻿@model CinemaTest.Models.User.User
+@{
+    ViewData["Title"] = "Hồ sơ cá nhân";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Thông tin tài khoản</h5>
+                </div>
+                <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success">
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
+
+                    <div class="text-center mb-4">
+                        <div class="avatar-circle mx-auto">
+                            <span class="avatar-text">@(string.IsNullOrEmpty(Model.FullName) ? Model.Username.Substring(0, 1).ToUpper() : Model.FullName.Substring(0, 1).ToUpper())</span>
+                        </div>
+                    </div>
+
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <strong><i class="fas fa-user me-2"></i>Tên đăng nhập:</strong>
+                            <span class="float-end">@Model.Username</span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong><i class="fas fa-envelope me-2"></i>Email:</strong>
+                            <span class="float-end">@Model.Email</span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong><i class="fas fa-id-card me-2"></i>Họ tên:</strong>
+                            <span class="float-end">@(string.IsNullOrEmpty(Model.FullName) ? "Chưa cập nhật" : Model.FullName)</span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong><i class="fas fa-phone me-2"></i>Số điện thoại:</strong>
+                            <span class="float-end">@(string.IsNullOrEmpty(Model.Phone) ? "Chưa cập nhật" : Model.Phone)</span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong><i class="fas fa-map-marker-alt me-2"></i>Địa chỉ:</strong>
+                            <span class="float-end">@(string.IsNullOrEmpty(Model.Address) ? "Chưa cập nhật" : Model.Address)</span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong><i class="fas fa-calendar-alt me-2"></i>Ngày tạo:</strong>
+                            <span class="float-end">@Model.CreatedAt.ToString("dd/MM/yyyy")</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Quản lý tài khoản</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-user-edit fa-3x mb-3 text-primary"></i>
+                                    <h5 class="card-title">Cập nhật thông tin</h5>
+                                    <p class="card-text">Cập nhật thông tin cá nhân và thông tin liên hệ của bạn.</p>
+                                    <a asp-action="EditProfile" class="btn btn-primary">
+                                        <i class="fas fa-edit me-2"></i>Cập nhật
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-key fa-3x mb-3 text-primary"></i>
+                                    <h5 class="card-title">Đổi mật khẩu</h5>
+                                    <p class="card-text">Thay đổi mật khẩu để bảo vệ tài khoản của bạn.</p>
+                                    <a asp-controller="Account" asp-action="ChangePassword" class="btn btn-primary">
+                                        <i class="fas fa-lock me-2"></i>Đổi mật khẩu
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-ticket-alt fa-3x mb-3 text-primary"></i>
+                                    <h5 class="card-title">Lịch sử đặt vé</h5>
+                                    <p class="card-text">Xem lại các vé bạn đã đặt và lịch sử giao dịch.</p>
+                                    <a asp-action="OrderHistory" asp-controller="Account" class="btn btn-primary">
+                                        <i class="fas fa-history me-2"></i>Xem lịch sử
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-sign-out-alt fa-3x mb-3 text-primary"></i>
+                                    <h5 class="card-title">Đăng xuất</h5>
+                                    <p class="card-text">Đăng xuất khỏi tài khoản của bạn.</p>
+                                    <a asp-action="Logout" class="btn btn-danger">
+                                        <i class="fas fa-power-off me-2"></i>Đăng xuất
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .avatar-circle {
+        width: 100px;
+        height: 100px;
+        background-color: #007bff;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .avatar-text {
+        color: white;
+        font-size: 42px;
+        font-weight: bold;
+    }
+</style>

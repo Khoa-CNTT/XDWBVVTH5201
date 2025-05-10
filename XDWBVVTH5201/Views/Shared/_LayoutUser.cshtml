@@ -1,0 +1,172 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CinemaTest</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Thêm Font Awesome CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="~/css/user.css" rel="stylesheet" />
+</head>
+<body class="bg-gradient-lightblue">
+
+    @{
+        var username = Context.Session.GetString("Username");
+        var genres = ViewBag.Genres as List<string>;
+    }
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="~/images/logoLM.png" alt="Logo" width="40" height="40" class="me-2">
+                <span class="fw-bold">CinemaTest</span>
+            </a>
+
+            <form class="d-flex me-3" asp-controller="Home" asp-action="Search" method="get">
+                <input class="form-control me-2" type="search" name="keyword" placeholder="Tìm kiếm phim..." aria-label="Search">
+                <button class="btn btn-outline-light" type="submit">
+                    <i class="fas fa-search"></i> Tìm kiếm
+                </button>
+            </form>
+
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">
+                        <i class="fas fa-home"></i> Trang chủ
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="genreDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-film"></i> Thể loại
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="genreDropdown">
+                        @if (genres != null)
+                        {
+                            foreach (var genre in genres)
+                            {
+                                <li><a class="dropdown-item" href="/Home/Genre?name=@genre">@genre</a></li>
+                            }
+                        }
+                        else
+                        {
+                            <li><span class="dropdown-item text-muted">Không có thể loại</span></li>
+                        }
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/Home/Showtimes">
+                        <i class="fas fa-calendar-alt"></i> Lịch chiếu
+                    </a>
+                </li>
+
+                @if (string.IsNullOrEmpty(username))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Account/Login">
+                            <i class="fas fa-sign-in-alt"></i> Đăng nhập
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Account/Register">
+                            <i class="fas fa-user-plus"></i> Đăng ký
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <div class="dropdown">
+                        <a class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="~/images/avatar_default.png" alt="Avatar" width="40" height="40" class="rounded-circle me-2">
+                            <strong>@username</strong>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownUser">
+                            <li>
+                                <a class="dropdown-item" asp-controller="Ticket" asp-action="MyTickets" asp-area="User">
+                                    <i class="fas fa-ticket-alt"></i> Vé của tôi
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-heart"></i> Yêu thích
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-list"></i> Danh sách
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" asp-controller="Account" asp-action="Profile">
+                                    <i class="fas fa-user me-2"></i>Hồ sơ cá nhân
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="/Account/Logout">
+                                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                }
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        @RenderBody()
+    </div>
+
+    <footer class="bg-dark text-light mt-5 py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>CinemaTest</h5>
+                    <p>Hệ thống rạp chiếu phim hàng đầu.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Liên hệ</h5>
+                    <p><i class="fas fa-envelope me-2"></i> info@cinematest.com</p>
+                    <p><i class="fas fa-phone me-2"></i> (123) 456-7890</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Theo dõi chúng tôi</h5>
+                    <div class="d-flex gap-2">
+                        <a href="#" class="text-light"><i class="fab fa-facebook fa-2x"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-instagram fa-2x"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-twitter fa-2x"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <p class="text-center mb-0">&copy; @DateTime.Now.Year - CinemaTest - Bản quyền thuộc về CinemaTest</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" rel="stylesheet" />
+
+    <script>
+        $(function () {
+            $("input[name='keyword']").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '/api/api/autocomplete',
+                        data: { term: request.term },
+                        success: function (data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 1
+            });
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

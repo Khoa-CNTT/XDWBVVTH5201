@@ -1,0 +1,59 @@
+﻿@model IEnumerable<CinemaTest.Models.Admin.Movie>
+
+@{
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+    ViewData["Title"] = "Trang Chủ - Phim Đang Chiếu";
+}
+
+<!-- Carousel Slide Banner -->
+<div id="bannerCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+    <div class="carousel-inner rounded shadow">
+        <div class="carousel-item active">
+            <img src="~/images/slide1.jpg" class="d-block w-100" alt="Slide 1">
+        </div>
+        <div class="carousel-item">
+            <img src="~/images/slide2.jpg" class="d-block w-100" alt="Slide 2">
+        </div>
+        <div class="carousel-item">
+            <img src="~/images/slide3.jpg" class="d-block w-100" alt="Slide 3">
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    </button>
+</div>
+
+<h2 class="text-center mb-5">🎬 Danh sách Phim Đang Chiếu</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning text-center" role="alert">
+        ❗ Không tìm thấy phim nào khớp với từ khóa.
+    </div>
+}
+else
+{
+<div class="row">
+    @foreach (var movie in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                    <img src="@Url.Content("~/posters/" + movie.PosterUrl)" class="card-img-top" style="height:400px; object-fit:cover;" alt="@movie.Title">
+                <div class="card-body">
+                    <h5 class="card-title">@movie.Title</h5>
+                    <p class="card-text">
+                        <strong>Thể loại:</strong> @movie.Genre <br />
+                        <strong>Thời lượng:</strong> @movie.Duration phút
+                    </p>
+                    <a href="@movie.TrailerUrl" target="_blank" class="btn btn-outline-primary btn-sm">Xem Trailer</a>
+                    <a asp-action="Details" asp-route-id="@movie.Id" class="btn btn-outline-primary btn-sm">Xem Chi Tiết</a>
+                    <a href="@Url.Action("Details", "Home", new { id = movie.Id })" class="btn btn-outline-primary btn-sm">Đặt vé</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+}

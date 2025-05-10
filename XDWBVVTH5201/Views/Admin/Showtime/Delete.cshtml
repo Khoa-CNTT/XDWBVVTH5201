@@ -1,0 +1,31 @@
+﻿@model CinemaTest.Models.Admin.Showtime
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Xóa Lịch Chiếu";
+}
+
+<h2 class="text-center mb-4 text-danger">🗑️ Xác nhận Xóa Lịch Chiếu</h2>
+
+<div class="card mx-auto shadow p-4" style="max-width: 500px;">
+    <dl class="row">
+        <dt class="col-sm-4">🎬 Phim:</dt>
+        <dd class="col-sm-8">@Model.Movie?.Title</dd>
+
+        <dt class="col-sm-4">🏢 Phòng:</dt>
+        <dd class="col-sm-8">@Model.Room?.Name</dd>
+
+        <dt class="col-sm-4">🕒 Bắt đầu:</dt>
+        <dd class="col-sm-8">@Model.StartTime.ToString("dd/MM/yyyy HH:mm")</dd>
+
+        <dt class="col-sm-4">⏰ Kết thúc:</dt>
+        <dd class="col-sm-8">@Model.EndTime.ToString("dd/MM/yyyy HH:mm")</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="d-flex justify-content-between">
+            <a asp-action="Index" class="btn btn-secondary">❌ Hủy</a>
+            <button type="submit" class="btn btn-danger">🗑️ Xóa Lịch Chiếu</button>
+        </div>
+    </form>
+</div>

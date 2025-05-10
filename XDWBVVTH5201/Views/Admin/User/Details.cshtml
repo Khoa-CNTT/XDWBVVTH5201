@@ -1,0 +1,112 @@
+﻿@model CinemaTest.Models.User.User
+@{
+    ViewData["Title"] = "Chi tiết người dùng";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Chi tiết người dùng</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/AdminHome">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Quản lý người dùng</a></li>
+        <li class="breadcrumb-item active">Chi tiết</li>
+    </ol>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-user me-1"></i>
+                    Thông tin cơ bản
+                </div>
+                <div class="card-body">
+                    <div class="mb-3 text-center">
+                        <div class="avatar-circle mx-auto" style="width: 100px; height: 100px; background-color: #007bff; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <span style="color: white; font-size: 40px;">
+                                @(string.IsNullOrEmpty(Model.FullName)
+                                    ? (!string.IsNullOrEmpty(Model.Username) ? Model.Username.Substring(0, 1).ToUpper() : "U")
+                                    : Model.FullName.Substring(0, 1).ToUpper())
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th>ID:</th>
+                                <td>@Model.Id</td>
+                            </tr>
+                            <tr>
+                                <th>Tên đăng nhập:</th>
+                                <td>@Model.Username</td>
+                            </tr>
+                            <tr>
+                                <th>Email:</th>
+                                <td>@Model.Email</td>
+                            </tr>
+                            <tr>
+                                <th>Họ tên:</th>
+                                <td>@(string.IsNullOrEmpty(Model.FullName) ? "Chưa cập nhật" : Model.FullName)</td>
+                            </tr>
+                            <tr>
+                                <th>Số điện thoại:</th>
+                                <td>@(string.IsNullOrEmpty(Model.Phone) ? "Chưa cập nhật" : Model.Phone)</td>
+                            </tr>
+                            <tr>
+                                <th>Địa chỉ:</th>
+                                <td>@(string.IsNullOrEmpty(Model.Address) ? "Chưa cập nhật" : Model.Address)</td>
+                            </tr>
+                            <tr>
+                                <th>Vai trò:</th>
+                                <td>
+                                    @if (Model.Role == "Admin")
+                                    {
+                                        <span class="badge bg-danger">Admin</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-primary">User</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Trạng thái:</th>
+                                <td>
+                                    @if (Model.IsLocked)
+                                    {
+                                        <span class="badge bg-danger">Đã khóa</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">Đang hoạt động</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Ngày tạo:</th>
+                                <td>@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                            </tr>
+                            <tr>
+                                <th>Cập nhật lần cuối:</th>
+                                <td>@(Model.UpdatedAt.HasValue ? Model.UpdatedAt.Value.ToString("dd/MM/yyyy HH:mm") : "Chưa cập nhật")</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="mt-3">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                            <i class="fas fa-edit me-1"></i>Chỉnh sửa
+                        </a>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>Quay lại
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <!-- Có thể thêm thông tin thống kê người dùng (số lượng vé đã đặt, tổng số tiền đã chi, v.v.) -->
+        </div>
+    </div>
+</div>

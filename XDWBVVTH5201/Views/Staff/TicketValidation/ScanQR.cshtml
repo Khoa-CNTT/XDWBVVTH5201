@@ -1,0 +1,89 @@
+﻿@{
+    ViewData["Title"] = "Quét mã QR";
+    Layout = "~/Views/Shared/_LayoutStaff.cshtml";
+}
+
+<h2 class="text-center mb-4">📱 Quét mã QR</h2>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-qrcode me-2"></i>Quét mã QR từ vé khách hàng</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <div id="qr-reader" style="width: 100%; max-width: 500px; margin: 0 auto;"></div>
+                    <div id="qr-reader-results" class="mt-3"></div>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>Hướng camera vào mã QR trên vé điện tử để quét. Hệ thống sẽ tự động kiểm tra tính hợp lệ của vé.
+                </div>
+
+                <div class="mt-3 text-center">
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-keyboard me-1"></i>Nhập mã thủ công
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const html5QrCode = new Html5Qrcode("qr-reader");
+            const qrConfig = { fps: 10, qrbox: 250 };
+            const resultsDiv = document.getElementById('qr-reader-results');
+
+            // Bắt đầu quét với camera sau (thường là camera chính trên điện thoại)
+            html5QrCode.start(
+                { facingMode: "environment" },
+                qrConfig,
+                onScanSuccess,
+                onScanFailure
+            );
+
+            function onScanSuccess(decodedText, decodedResult) {
+                // Dừng quét sau khi đọc được mã QR
+                html5QrCode.stop();
+
+                // Hiển thị kết quả
+                resultsDiv.innerHTML = `
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle me-2"></i>Đã quét thành công!
+                            </div>
+                            <p>Mã vé: <strong>${decodedText}</strong></p>
+                            <div class="spinner-border text-primary mb-2" role="status">
+                                <span class="visually-hidden">Đang kiểm tra...</span>
+                            </div>
+                            <p>Đang kiểm tra thông tin vé...</p>
+                        `;
+
+                // Nếu mã QR chứa nhiều thông tin, chỉ lấy phần mã vé
+                let ticketCode = decodedText;
+                if (decodedText.includes("Mã vé:")) {
+                    // Tách mã vé từ chuỗi được mã hóa
+                    const lines = decodedText.split('\n');
+                    for (let line of lines) {
+                        if (line.startsWith("Mã vé:")) {
+                            ticketCode = line.replace("Mã vé:", "").trim();
+                            break;
+                        }
+                    }
+                }
+
+                // Chuyển hướng đến trang kiểm tra với mã vé đã quét
+                window.location.href = `/Staff/TicketValidation/ValidateTicket?ticketCode=${encodeURIComponent(ticketCode)}`;
+            }
+
+            function onScanFailure(error) {
+                // Xử lý lỗi nếu cần
+                console.warn(`QR scan error: ${error}`);
+            }
+        });
+    </script>
+}

@@ -1,0 +1,56 @@
+﻿/* ===== ADMIN DASHBOARD STYLE ===== */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+#wrapper {
+    display: flex;
+}
+
+#sidebar-wrapper {
+    min-width: 240px;
+    max-width: 240px;
+    height: 100vh;
+    position: fixed;
+}
+
+#page-content-wrapper {
+    margin-left: 240px;
+    padding: 20px;
+    width: 100%;
+}
+
+.sidebar-heading {
+    background-color: #212529;
+    font-size: 1.2rem;
+    color: #fff;
+}
+
+.list-group-item {
+    transition: 0.3s;
+}
+
+    .list-group-item:hover {
+        background-color: #1d3557;
+        color: #fff;
+    }
+
+.navbar {
+    background-color: #ffffff;
+    border-bottom: 1px solid #ccc;
+}
+
+.card {
+    border-radius: 8px;
+}
+
+.btn {
+    border-radius: 4px;
+}
+
+/* Icons */
+.fa-film, .fa-clock, .fa-door-open {
+    opacity: 0.8;
+}

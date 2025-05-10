@@ -1,0 +1,84 @@
+﻿@{
+    ViewData["Title"] = "Trang chủ nhân viên";
+    Layout = "~/Views/Shared/_LayoutStaff.cshtml";
+}
+
+<h2 class="text-center mb-4">📊 Dashboard Nhân viên</h2>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card bg-primary text-white shadow h-100">
+            <div class="card-body d-flex align-items-center justify-content-between">
+                <div>
+                    <h5 class="card-title">Vé chờ xác nhận</h5>
+                    <h3>@ViewBag.PendingTickets</h3>
+                </div>
+                <i class="fas fa-ticket-alt fa-3x"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card bg-success text-white shadow h-100">
+            <div class="card-body d-flex align-items-center justify-content-between">
+                <div>
+                    <h5 class="card-title">Vé đã xác nhận</h5>
+                    <h3>@ViewBag.CheckedInTickets</h3>
+                </div>
+                <i class="fas fa-check-circle fa-3x"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card bg-warning text-white shadow h-100">
+            <div class="card-body d-flex align-items-center justify-content-between">
+                <div>
+                    <h5 class="card-title">Phim chiếu hôm nay</h5>
+                    <h3>@ViewBag.TodayMovies</h3>
+                </div>
+                <i class="fas fa-film fa-3x"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Nhiệm vụ của nhân viên</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    <a href="/TicketValidation" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">Kiểm tra vé theo mã</h5>
+                        </div>
+                        <p class="mb-1">Nhập mã vé để kiểm tra và xác nhận khách hàng vào rạp.</p>
+                    </a>
+                    <a href="/TicketValidation/ScanQR" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">Quét mã QR</h5>
+                        </div>
+                        <p class="mb-1">Quét mã QR từ vé điện tử của khách hàng để xác nhận nhanh chóng.</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Lưu ý cho nhân viên</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    <li class="list-group-item">Kiểm tra kỹ thông tin vé trước khi xác nhận</li>
+                    <li class="list-group-item">Vé đã được xác nhận không thể sử dụng lại</li>
+                    <li class="list-group-item">Chỉ vé cho suất chiếu trong ngày mới hợp lệ</li>
+                    <li class="list-group-item">Liên hệ quản lý nếu có sự cố với hệ thống</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,50 @@
+﻿/* ===== USER SITE STYLE ===== */
+body.bg-gradient-lightblue {
+    background: linear-gradient(to bottom right, #d0eafc, #ffffff);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: #fff;
+}
+
+.nav-link {
+    color: #ffffff !important;
+}
+
+    .nav-link:hover {
+        text-decoration: underline;
+    }
+
+.card {
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+}
+
+    .card:hover {
+        transform: scale(1.02);
+    }
+
+.card-img-top {
+    height: 400px;
+    object-fit: cover;
+}
+
+.carousel-inner img {
+    height: 450px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+/* Autocomplete Highlight */
+.ui-menu-item-wrapper.ui-state-active {
+    background-color: #007bff !important;
+    color: white;
+}

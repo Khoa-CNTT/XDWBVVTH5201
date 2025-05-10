@@ -1,0 +1,54 @@
+﻿@model IEnumerable<CinemaTest.Models.Admin.Showtime>
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Danh sách Lịch Chiếu";
+}
+
+<h2 class="text-center mb-4">📅 Danh sách Lịch Chiếu</h2>
+
+<div class="text-end mb-3">
+    <a asp-action="Create" class="btn btn-success">➕ Thêm Lịch Chiếu</a>
+</div>
+
+<table class="table table-bordered table-striped shadow-sm">
+    <thead class="table-dark text-center">
+        <tr>
+            <th>🎬 Phim</th>
+            <th>🏢 Phòng</th>
+            <th>🕒 Bắt đầu</th>
+            <th>⏰ Kết thúc</th>
+            <th>⚙️ Hành động</th>
+        </tr>
+    </thead>
+    <tbody class="text-center">
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="5" class="text-muted">Không có lịch chiếu nào.</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Movie?.Title</td>
+                    <td>@item.Room?.Name</td>
+                    <td>@item.StartTime.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@item.EndTime.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">✏️</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">🗑️</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}

@@ -1,0 +1,41 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2 class="text-center mb-4">📊 Dashboard Quản trị</h2>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card bg-primary text-white shadow h-100">
+            <div class="card-body d-flex align-items-center justify-content-between">
+                <div>
+                    <h5 class="card-title">Tổng số phim</h5>
+                    <h3>@ViewBag.MovieCount</h3>
+                </div>
+                <i class="fas fa-film fa-3x"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card bg-success text-white shadow h-100">
+            <div class="card-body d-flex align-items-center justify-content-between">
+                <div>
+                    <h5 class="card-title">Tổng số phòng</h5>
+                    <h3>@ViewBag.RoomCount</h3>
+                </div>
+                <i class="fas fa-door-open fa-3x"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card bg-warning text-white shadow h-100">
+            <div class="card-body d-flex align-items-center justify-content-between">
+                <div>
+                    <h5 class="card-title">Tổng lịch chiếu</h5>
+                    <h3>@ViewBag.ShowtimeCount</h3>
+                </div>
+                <i class="fas fa-clock fa-3x"></i>
+            </div>
+        </div>
+    </div>
+</div>

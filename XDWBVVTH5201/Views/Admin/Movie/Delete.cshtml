@@ -1,0 +1,24 @@
+﻿@model CinemaTest.Models.Admin.Movie
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Xóa Phim";
+}
+
+<h2 class="text-center mb-4">🗑️ Xóa Phim</h2>
+
+<div class="alert alert-danger text-center">
+    <h4>Bạn có chắc chắn muốn xóa phim <strong>@Model.Title</strong>?</h4>
+</div>
+
+<div class="text-center mb-4">
+    @if (!string.IsNullOrEmpty(Model.PosterUrl))
+    {
+        <img src="@Url.Content("~/posters/" + Model.PosterUrl)" alt="Poster" style="max-height: 300px;" class="img-thumbnail" />
+    }
+</div>
+
+<form asp-action="DeleteConfirmed" method="post" class="text-center">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger me-2">🗑️ Xóa</button>
+    <a asp-action="Index" class="btn btn-secondary">❌ Hủy</a>
+</form>

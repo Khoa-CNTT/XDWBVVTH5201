@@ -1,0 +1,50 @@
+﻿@model IEnumerable<CinemaTest.Models.Admin.Room>
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Danh sách Phòng Chiếu";
+}
+
+<h2 class="text-center mb-4">🏢 Danh sách Phòng Chiếu</h2>
+
+<div class="text-end mb-3">
+    <a asp-action="Create" class="btn btn-success">➕ Thêm Phòng Chiếu</a>
+</div>
+
+<table class="table table-bordered table-striped shadow-sm">
+    <thead class="table-dark text-center">
+        <tr>
+            <th>🏷️ Tên Phòng</th>
+            <th>💺 Số Ghế</th>
+            <th>⚙️ Hành động</th>
+        </tr>
+    </thead>
+    <tbody class="text-center">
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="3" class="text-muted">Không có phòng chiếu nào.</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var room in Model)
+            {
+                <tr>
+                    <td>@room.Name</td>
+                    <td>@room.SeatCount</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@room.Id" class="btn btn-sm btn-warning">✏️</a>
+                        <a asp-action="Delete" asp-route-id="@room.Id" class="btn btn-sm btn-danger">🗑️</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}

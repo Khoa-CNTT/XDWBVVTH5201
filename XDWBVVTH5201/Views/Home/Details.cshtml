@@ -1,0 +1,56 @@
+﻿@model CinemaTest.Models.User.MovieDetailsViewModel
+@{
+    ViewData["Title"] = "Chi Tiết Phim";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <img src="~/posters/@Model.Movie.PosterUrl" class="img-fluid" alt="@Model.Movie.Title" />
+        </div>
+        <div class="col-md-8">
+            <h2>@Model.Movie.Title</h2>
+            <p><strong>Thể loại:</strong> @Model.Movie.Genre</p>
+            <p><strong>Thời lượng:</strong> @Model.Movie.Duration phút</p>
+            <p><strong>Mô tả:</strong> @Model.Movie.Description</p>
+            <a href="@Model.Movie.TrailerUrl" class="btn btn-outline-primary" target="_blank">Xem Trailer</a>
+            <br />
+            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary mt-3">Quay lại</a>
+        </div>
+    </div>
+
+    <hr />
+
+    <h4 class="mt-4">Lịch Chiếu</h4>
+    @if (Model.Showtimes.Any())
+    {
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Phòng</th>
+                    <th>Giờ bắt đầu</th>
+                    <th>Giờ kết thúc</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var show in Model.Showtimes)
+                {
+                    <tr>
+                        <td>@(show.Room?.Name ?? "Phòng không xác định")</td>
+                        <td>@show.StartTime.ToString("HH:mm dd/MM/yyyy")</td>
+                        <td>@show.EndTime.ToString("HH:mm dd/MM/yyyy")</td>
+                        <td>
+                            <a href="@Url.Action("Book", "Ticket", new { showtimeId = show.Id })" class="btn btn-success btn-sm">Đặt vé</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Hiện chưa có lịch chiếu nào cho phim này.</p>
+    }
+</div>

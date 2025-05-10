@@ -1,0 +1,106 @@
+﻿@model CinemaTest.Models.Admin.Showtime
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Thêm Lịch Chiếu";
+    var movies = ViewBag.Movies as List<CinemaTest.Models.Admin.Movie> ?? new();
+    var rooms = ViewBag.Rooms as List<CinemaTest.Models.Admin.Room> ?? new();
+}
+
+<h2 class="text-center mb-4">➕ Thêm Lịch Chiếu</h2>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
+<form asp-action="Create" method="post" class="mx-auto" style="max-width: 600px;">
+    <div class="mb-3">
+        <label class="form-label">🎬 Chọn Phim</label>
+        <select asp-for="MovieId" name="MovieId" class="form-select" required>
+            <option value="">-- Chọn phim --</option>
+            @foreach (var movie in movies)
+            {
+                <option value="@movie.Id" selected="@(Model?.MovieId == movie.Id ? "selected" : null)">
+                    @movie.Title
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">🏢 Chọn Phòng Chiếu</label>
+        <select asp-for="RoomId" name="RoomId" class="form-select" required>
+            <option value="">-- Chọn phòng --</option>
+            @foreach (var room in rooms)
+            {
+                <option value="@room.Id" selected="@(Model?.RoomId == room.Id ? "selected" : null)">
+                    @room.Name
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">🕒 Giờ Bắt Đầu</label>
+        <input asp-for="StartTime" name="StartTime" type="datetime-local" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">⏰ Giờ Kết Thúc (Tự động)</label>
+        <input asp-for="EndTime" name="EndTime" type="datetime-local" class="form-control" readonly />
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <a asp-action="Index" class="btn btn-secondary">❌ Hủy</a>
+        <button type="submit" class="btn btn-primary">💾 Lưu</button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        const durationMap = {
+        @for (int i = 0; i < movies.Count; i++)
+        {
+            var m = movies[i];
+            <text>@m.Id: @m.Duration@(i < movies.Count - 1 ? "," : "")</text>
+        }
+                };
+
+        const movieSelect = document.querySelector("select[name='MovieId']");
+        const startInput = document.querySelector("input[name='StartTime']");
+        const endInput = document.querySelector("input[name='EndTime']");
+
+        function updateEndTime() {
+            const movieId = movieSelect.value;
+            const duration = durationMap[movieId];
+            if (!duration || !startInput.value) return;
+
+            const startTime = new Date(startInput.value);
+            const now = new Date();
+
+            if (startTime < now) {
+                alert("❌ Giờ bắt đầu phải ở tương lai.");
+                startInput.value = "";
+                endInput.value = "";
+                startInput.focus();
+                return;
+            }
+
+            startTime.setMinutes(startTime.getMinutes() + duration);
+            const formatted = new Date(startTime.getTime() - startTime.getTimezoneOffset() * 60000)
+                .toISOString().slice(0, 16);
+
+            endInput.value = formatted;
+        }
+
+        movieSelect.addEventListener("change", updateEndTime);
+        startInput.addEventListener("input", updateEndTime);
+    </script>
+}

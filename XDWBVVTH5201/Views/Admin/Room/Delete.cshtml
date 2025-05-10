@@ -1,0 +1,18 @@
+﻿@model CinemaTest.Models.Admin.Room
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Xóa Phòng Chiếu";
+}
+
+<h2 class="text-center mb-4">🗑️ Xóa Phòng Chiếu</h2>
+
+<div class="alert alert-danger text-center">
+    <h4>Bạn có chắc chắn muốn xóa phòng <strong>@Model.Name</strong> không?</h4>
+    <p>Số lượng ghế: <strong>@Model.SeatCount</strong></p>
+</div>
+
+<form asp-action="Delete" method="post" class="text-center">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger me-2">🗑️ Xóa</button>
+    <a asp-action="Index" class="btn btn-secondary">❌ Hủy</a>
+</form>

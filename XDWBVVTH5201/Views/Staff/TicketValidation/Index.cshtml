@@ -1,0 +1,82 @@
+﻿@model CinemaTest.Models.Staff.TicketValidationViewModel
+@{
+    ViewData["Title"] = "Kiểm tra vé";
+    Layout = "~/Views/Shared/_LayoutStaff.cshtml";
+}
+
+<h2 class="text-center mb-4">🎫 Kiểm tra vé</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-ticket-alt me-2"></i>Nhập mã vé</h5>
+            </div>
+            <div class="card-body">
+                <form asp-controller="TicketValidation" asp-action="ValidateTicket" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="TicketCode" class="form-label">Mã vé</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                            <input asp-for="TicketCode" class="form-control" autofocus placeholder="Nhập mã vé" />
+                        </div>
+                        <span asp-validation-for="TicketCode" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search me-1"></i>Kiểm tra
+                        </button>
+                        <a href="@Url.Action("ScanQR", "TicketValidation")" class="btn btn-outline-primary">
+                            <i class="fas fa-qrcode me-1"></i>Quét mã QR
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Hướng dẫn</h5>
+            </div>
+            <div class="card-body">
+                <h5>Cách kiểm tra vé:</h5>
+                <ol>
+                    <li>Nhập mã vé từ vé in hoặc vé điện tử của khách hàng.</li>
+                    <li>Nhấn "Kiểm tra" để xác minh thông tin vé.</li>
+                    <li>Xác nhận thông tin vé (phim, phòng, ghế, giờ chiếu).</li>
+                    <li>Nếu thông tin đúng, nhấn "Xác nhận" để đánh dấu vé đã được sử dụng.</li>
+                </ol>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>Bạn cũng có thể quét mã QR từ vé điện tử để kiểm tra nhanh hơn.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,37 @@
+﻿@model CinemaTest.Models.User.User
+
+@{
+    ViewData["Title"] = "Đăng ký";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+<h2 class="text-center mb-4">Đăng ký tài khoản</h2>
+
+<form asp-action="Register" method="post" class="mx-auto" style="max-width: 400px;">
+    <div class="mb-3">
+        <label class="form-label">Tên đăng nhập</label>
+        <input asp-for="Username" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input asp-for="Email" type="email" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Mật khẩu</label>
+        <input asp-for="PasswordHash" type="password" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Xác nhận mật khẩu</label>
+        <input name="ConfirmPassword" type="password" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-success w-100">Đăng ký</button>
+    <div class="text-center mt-3">
+        <span>Đã có tài khoản?</span>
+        <a href="/Account/Login" class="text-primary text-decoration-none">Đăng nhập ngay</a>
+    </div>
+</form>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-danger mt-3">@ViewBag.Message</div>
+}

@@ -1,0 +1,250 @@
+﻿@model CinemaTest.Models.User.BookTicketViewModel
+@{
+    ViewData["Title"] = "Đặt vé";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">🎟️ Đặt vé xem phim</h2>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <img src="~/posters/@(Model.Showtime?.Movie?.PosterUrl ?? "default.jpg")" class="card-img-top" alt="Movie Poster">
+                <div class="card-body">
+                    <h5 class="card-title">@(Model.Showtime?.Movie?.Title ?? "Không có tiêu đề")</h5>
+                    <p class="card-text">
+                        <strong>Thể loại:</strong> @(Model.Showtime?.Movie?.Genre ?? "N/A")<br>
+                        <strong>Thời lượng:</strong> @(Model.Showtime?.Movie?.Duration.ToString() ?? "0") phút<br>
+                        <strong>Phòng chiếu:</strong> @(Model.Showtime?.Room?.Name ?? "N/A")<br>
+                        <strong>Suất chiếu:</strong> @(Model.Showtime?.StartTime.ToString("HH:mm dd/MM/yyyy") ?? "N/A")<br>
+                        <strong>Kết thúc:</strong> @(Model.Showtime?.EndTime.ToString("HH:mm dd/MM/yyyy") ?? "N/A")
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Chọn ghế</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="screen-container">
+                            <div class="screen">MÀN HÌNH</div>
+                        </div>
+                    </div>
+
+                    <form method="post" asp-action="Book" asp-route-showtimeId="@(Model.Showtime?.Id ?? 0)">
+                        <div class="seat-map">
+                            @{
+                                var totalSeats = Model.Showtime?.Room?.SeatCount ?? 0;
+                                var rows = (int)Math.Ceiling(totalSeats / 10.0);
+
+                                for (char row = 'A'; row < 'A' + rows; row++)
+                                {
+                                    <div class="seat-row">
+                                        <div class="row-label">@row</div>
+                                        @for (int col = 1; col <= 10 && ((row - 'A') * 10 + col) <= totalSeats; col++)
+                                        {
+                                            var seatNumber = $"{row}{col}";
+                                            var isReserved = Model.ReservedSeats?.Contains(seatNumber) == true;
+                                            var seatClass = isReserved ? "seat reserved" : "seat available";
+
+                                            <div class="@seatClass" data-seat="@seatNumber" onclick="toggleSeat(this, @isReserved.ToString().ToLower())">
+                                                @seatNumber
+                                                @if (!isReserved)
+                                                {
+                                                    <input type="checkbox" name="selectedSeats" value="@seatNumber" style="display:none;" />
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            }
+                        </div>
+
+                        <div class="seat-legend mt-4">
+                            <div class="legend-item">
+                                <div class="seat-sample available"></div>
+                                <span>Ghế trống</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="seat-sample selected"></div>
+                                <span>Ghế đã chọn</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="seat-sample reserved"></div>
+                                <span>Ghế đã đặt</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <p>Giá vé: <strong>85,000 VNĐ / ghế</strong></p>
+                            <p>Đã chọn: <span id="selectedCount">0</span> ghế</p>
+                            <p>Tổng tiền: <span id="totalAmount">0</span> VNĐ</p>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="@Url.Action("Details", "Home", new { id = Model.Showtime?.MovieId ?? 0 })" class="btn btn-secondary">
+                                ❌ Quay lại
+                            </a>
+                            <button type="submit" class="btn btn-success" id="bookButton" disabled>
+                                🛒 Tiếp tục thanh toán
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .screen-container {
+        perspective: 500px;
+        margin-bottom: 30px;
+    }
+
+    .screen {
+        height: 40px;
+        background: #d3d3d3;
+        width: 100%;
+        transform: rotateX(-30deg);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #444;
+        font-weight: bold;
+    }
+
+    .seat-map {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .seat-row {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .row-label {
+        width: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .seat {
+        width: 35px;
+        height: 35px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8em;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+        .seat.available {
+            background-color: #a6e3a1;
+            border: 1px solid #76c893;
+        }
+
+        .seat.selected {
+            background-color: #577590;
+            color: white;
+            border: 1px solid #344e5c;
+            transform: scale(1.05);
+        }
+
+        .seat.reserved {
+            background-color: #e5989b;
+            color: #555;
+            border: 1px solid #b5838d;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .seat:hover:not(.reserved) {
+            transform: scale(1.1);
+        }
+
+    .seat-legend {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .seat-sample {
+        width: 20px;
+        height: 20px;
+        border-radius: 5px;
+    }
+
+        .seat-sample.available {
+            background-color: #a6e3a1;
+            border: 1px solid #76c893;
+        }
+
+        .seat-sample.selected {
+            background-color: #577590;
+            border: 1px solid #344e5c;
+        }
+
+        .seat-sample.reserved {
+            background-color: #e5989b;
+            border: 1px solid #b5838d;
+        }
+</style>
+
+<script>
+    function toggleSeat(element, isReserved) {
+        if (isReserved) return;
+
+        const checkbox = element.querySelector('input[type="checkbox"]');
+
+        if (element.classList.contains('selected')) {
+            element.classList.remove('selected');
+            element.classList.add('available');
+            checkbox.checked = false;
+        } else {
+            element.classList.remove('available');
+            element.classList.add('selected');
+            checkbox.checked = true;
+        }
+
+        updateSummary();
+    }
+
+    function updateSummary() {
+        const selectedSeats = document.querySelectorAll('.seat.selected').length;
+        const pricePerSeat = 85000;
+        const totalAmount = selectedSeats * pricePerSeat;
+
+        document.getElementById('selectedCount').textContent = selectedSeats;
+        document.getElementById('totalAmount').textContent = totalAmount.toLocaleString('vi-VN');
+
+        // Enable/disable book button
+        document.getElementById('bookButton').disabled = selectedSeats === 0;
+    }
+</script>

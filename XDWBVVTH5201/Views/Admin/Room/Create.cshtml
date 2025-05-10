@@ -1,0 +1,42 @@
+﻿@model CinemaTest.Models.Admin.Room
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Thêm Phòng Chiếu";
+}
+
+<h2 class="text-center mb-4">➕ Thêm Phòng Chiếu</h2>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
+<form asp-action="Create" method="post" class="mx-auto" style="max-width: 600px;">
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label">🏷️ Tên Phòng</label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SeatCount" class="form-label">💺 Số Lượng Ghế</label>
+        <input asp-for="SeatCount" type="number" class="form-control" min="1" />
+        <span asp-validation-for="SeatCount" class="text-danger"></span>
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <a asp-action="Index" class="btn btn-secondary">❌ Hủy</a>
+        <button type="submit" class="btn btn-primary">💾 Lưu</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

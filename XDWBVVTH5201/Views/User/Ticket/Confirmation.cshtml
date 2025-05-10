@@ -1,0 +1,144 @@
+﻿@model CinemaTest.Models.User.Transaction
+@{
+    ViewData["Title"] = "Xác nhận đặt vé";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card border-success shadow-sm">
+        <div class="card-body text-center p-5">
+            <div class="mb-4">
+                <i class="fas fa-check-circle text-success" style="font-size: 5rem;"></i>
+            </div>
+            <h2 class="card-title mb-3">Đặt vé thành công!</h2>
+            <p class="card-text">Cảm ơn bạn đã đặt vé. Vui lòng kiểm tra thông tin vé phía dưới.</p>
+            <hr>
+            <div class="row mt-4">
+                <div class="col-md-6 offset-md-3">
+                    <div class="text-start">
+                        <p><strong>Mã giao dịch:</strong> @Model.TransactionCode</p>
+                        <p><strong>Phương thức thanh toán:</strong> @Model.PaymentMethod</p>
+                        <p><strong>Tổng tiền:</strong> @Model.Amount.ToString("N0") VNĐ</p>
+                        <p><strong>Ngày đặt:</strong> @Model.TransactionDate.ToString("HH:mm dd/MM/yyyy")</p>
+                        <p>
+                            <strong>Trạng thái:</strong>
+                            <span class="badge bg-success">@Model.Status</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Thông tin vé</h5>
+        </div>
+        <div class="card-body">
+            @if (Model.Tickets != null && Model.Tickets.Any())
+            {
+                var ticket = Model.Tickets.First(); // Lấy vé đầu tiên để hiển thị thông tin phim
+
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <img src="~/posters/@(ticket.Showtime?.Movie?.PosterUrl ?? "default.jpg")" class="img-fluid rounded" alt="Movie Poster">
+                    </div>
+                    <div class="col-md-9">
+                        <h4>@(ticket.Showtime?.Movie?.Title ?? "Không có tiêu đề")</h4>
+                        <p class="mb-1"><strong>Thể loại:</strong> @(ticket.Showtime?.Movie?.Genre ?? "N/A")</p>
+                        <p class="mb-1"><strong>Thời lượng:</strong> @(ticket.Showtime?.Movie?.Duration.ToString() ?? "0") phút</p>
+                        <p class="mb-1"><strong>Phòng chiếu:</strong> @(ticket.Showtime?.Room?.Name ?? "N/A")</p>
+                        <p class="mb-1"><strong>Suất chiếu:</strong> @(ticket.Showtime?.StartTime.ToString("HH:mm dd/MM/yyyy") ?? "N/A")</p>
+                        <p class="mb-1">
+                            <strong>Ghế:</strong>
+                            @foreach (var t in Model.Tickets)
+                            {
+                                <span class="badge bg-info text-dark me-1">@t.SeatNumber</span>
+                            }
+                        </p>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Mã vé</th>
+                                <th>Ghế</th>
+                                <th>Giá vé</th>
+                                <th>Trạng thái</th>
+                                <th>Mã QR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var t in Model.Tickets)
+                            {
+                                <tr>
+                                    <td>@t.TicketCode</td>
+                                    <td>@t.SeatNumber</td>
+                                    <td>@t.Price.ToString("N0") VNĐ</td>
+                                    <td>
+                                        <span class="badge bg-success">@t.Status</span>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                                data-bs-toggle="modal" data-bs-target="#qrModal-@t.Id">
+                                            <i class="fas fa-qrcode"></i> Xem mã QR
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Thêm modal cho mỗi vé -->
+                @foreach (var t in Model.Tickets)
+                {
+                    <div class="modal fade" id="qrModal-@t.Id" tabindex="-1" aria-labelledby="qrModalLabel-@t.Id" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="qrModalLabel-@t.Id">Mã QR vé: @t.TicketCode</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <img src="@Url.Action("GetQrCode", "Ticket", new { ticketCode = t.TicketCode })"
+                                         alt="QR Code" class="img-fluid" style="max-width: 250px;">
+                                    <div class="mt-3">
+                                        <p><strong>Ghế:</strong> @t.SeatNumber</p>
+                                        <p><strong>Phòng:</strong> @(t.Showtime?.Room?.Name ?? "N/A")</p>
+                                        <p><strong>Phim:</strong> @(t.Showtime?.Movie?.Title ?? "N/A")</p>
+                                        <p><strong>Thời gian:</strong> @(t.Showtime?.StartTime.ToString("HH:mm dd/MM/yyyy") ?? "N/A")</p>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                    <a href="@Url.Action("GetQrCode", "Ticket", new { ticketCode = t.TicketCode })"
+                                       class="btn btn-primary" target="_blank">
+                                        <i class="fas fa-download"></i> Tải QR Code
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="alert alert-warning">
+                    Không tìm thấy thông tin vé.
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a asp-action="MyTickets" class="btn btn-primary me-2">
+            <i class="fas fa-ticket-alt me-1"></i> Xem vé của tôi
+        </a>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-home me-1"></i> Về trang chủ
+        </a>
+    </div>
+</div>

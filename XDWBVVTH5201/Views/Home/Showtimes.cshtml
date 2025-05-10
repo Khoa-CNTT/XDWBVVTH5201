@@ -1,0 +1,66 @@
+﻿@model IEnumerable<CinemaTest.Models.Admin.Showtime>
+@{
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+    ViewData["Title"] = "Lịch Chiếu";
+    var movies = ViewBag.Movies as List<CinemaTest.Models.Admin.Movie> ?? new List<CinemaTest.Models.Admin.Movie>();
+    var selectedMovieId = Context.Request.Query["movieId"].ToString();
+    var selectedDate = Context.Request.Query["date"].ToString();
+}
+
+<h2 class="text-center mb-4">📅 Lịch Chiếu Phim</h2>
+
+<!-- Bộ lọc -->
+<form method="get" asp-action="Showtimes" class="row g-3 align-items-end mb-4">
+    <div class="col-md-5">
+        <label for="movieId" class="form-label">Chọn phim</label>
+        <select name="movieId" class="form-select" onchange="this.form.submit()">
+            <option value="">-- Tất cả phim --</option>
+            @foreach (var movie in movies)
+            {
+                <option value="@movie.Id" selected="@(selectedMovieId == movie.Id.ToString() ? "selected" : "")">
+                    @movie.Title
+                </option>
+            }
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="date" class="form-label">Chọn ngày</label>
+        <input type="date" name="date" class="form-control" value="@selectedDate" onchange="this.form.submit()" />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label d-block">&nbsp;</label>
+        <button type="submit" class="btn btn-primary w-100">Lọc</button>
+    </div>
+</form>
+
+<!-- Bảng lịch chiếu -->
+@if (!Model.Any())
+{
+    <div class="alert alert-warning text-center">
+        Không có lịch chiếu phù hợp với bộ lọc đã chọn.
+    </div>
+}
+else
+{
+    <table class="table table-striped shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Phim</th>
+                <th>Phòng</th>
+                <th>Bắt đầu</th>
+                <th>Kết thúc</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Model.OrderBy(x => x.StartTime))
+            {
+                <tr>
+                    <td>@(s.Movie?.Title ?? "Không có tên phim")</td>
+                    <td>@(s.Room?.Name ?? "Không có tên phòng")</td>
+                    <td>@s.StartTime.ToString("HH:mm dd/MM/yyyy")</td>
+                    <td>@s.EndTime.ToString("HH:mm dd/MM/yyyy")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

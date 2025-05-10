@@ -1,0 +1,101 @@
+﻿@model IEnumerable<CinemaTest.Models.User.Transaction>
+@{
+    ViewData["Title"] = "Lịch sử giao dịch";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">📊 Lịch sử giao dịch</h5>
+            <a asp-action="Profile" class="btn btn-sm btn-light">
+                <i class="fas fa-arrow-left me-2"></i>Quay lại hồ sơ
+            </a>
+        </div>
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Mã giao dịch</th>
+                                <th>Ngày giao dịch</th>
+                                <th>Số tiền</th>
+                                <th>Phương thức</th>
+                                <th>Trạng thái</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var transaction in Model)
+                            {
+                                <tr>
+                                    <td><code>@transaction.TransactionCode</code></td>
+                                    <td>@transaction.TransactionDate.ToString("HH:mm dd/MM/yyyy")</td>
+                                    <td class="text-danger fw-bold">@transaction.Amount.ToString("N0") VNĐ</td>
+                                    <td>
+                                        @switch (transaction.PaymentMethod)
+                                        {
+                                            case "Counter":
+                                                <span class="badge bg-secondary">Thanh toán tại quầy</span>
+                                                break;
+                                            case "MoMo":
+                                                <span class="badge bg-danger">Ví MoMo</span>
+                                                break;
+                                            case "VNPay":
+                                                <span class="badge bg-primary">VNPay</span>
+                                                break;
+                                            case "ZaloPay":
+                                                <span class="badge bg-info">ZaloPay</span>
+                                                break;
+                                            case "Simulated":
+                                                <span class="badge bg-warning text-dark">Mô phỏng</span>
+                                                break;
+                                            default:
+                                                <span class="badge bg-secondary">@transaction.PaymentMethod</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td>
+                                        @switch (transaction.Status)
+                                        {
+                                            case "Completed":
+                                                <span class="badge bg-success">Hoàn thành</span>
+                                                break;
+                                            case "Pending":
+                                                <span class="badge bg-warning text-dark">Đang xử lý</span>
+                                                break;
+                                            case "Failed":
+                                                <span class="badge bg-danger">Thất bại</span>
+                                                break;
+                                            default:
+                                                <span class="badge bg-secondary">@transaction.Status</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td>
+                                        <a asp-controller="Ticket" asp-action="Confirmation" asp-route-transactionId="@transaction.Id" class="btn btn-sm btn-outline-info">
+                                            <i class="fas fa-eye me-1"></i>Chi tiết
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>Bạn chưa có giao dịch nào.
+                </div>
+                <div class="text-center mt-3">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                        <i class="fas fa-film me-2"></i>Khám phá phim ngay
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

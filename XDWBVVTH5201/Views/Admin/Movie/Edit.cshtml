@@ -1,0 +1,59 @@
+﻿@model CinemaTest.Models.Admin.Movie
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Sửa Phim";
+}
+
+<h2 class="text-center mb-4">✏️ Sửa Thông Tin Phim</h2>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data" class="mx-auto" style="max-width: 600px;">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="PosterUrl" />
+
+    <div class="mb-3">
+        <label class="form-label">🎬 Tên phim</label>
+        <input asp-for="Title" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">🎭 Thể loại</label>
+        <input asp-for="Genre" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">📝 Mô tả</label>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">⏱️ Thời lượng (phút)</label>
+        <input asp-for="Duration" type="number" min="1" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">🔗 Link Trailer</label>
+        <input asp-for="TrailerUrl" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">🖼️ Poster hiện tại:</label><br />
+        @if (!string.IsNullOrEmpty(Model.PosterUrl))
+        {
+            <img src="@Url.Content("~/posters/" + Model.PosterUrl)" alt="Poster" class="img-thumbnail mb-2" style="max-height: 300px;" />
+        }
+        else
+        {
+            <p><em>Chưa có poster</em></p>
+        }
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">📁 Chọn Poster mới (nếu muốn thay)</label>
+        <input type="file" name="posterFile" class="form-control" />
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <a asp-action="Index" class="btn btn-secondary">❌ Hủy</a>
+        <button type="submit" class="btn btn-primary">💾 Cập nhật</button>
+    </div>
+</form>

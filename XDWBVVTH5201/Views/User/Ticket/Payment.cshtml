@@ -1,0 +1,219 @@
+﻿@model CinemaTest.Models.User.PaymentViewModel
+@{
+    ViewData["Title"] = "Thanh toán";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">💰 Thanh toán</h2>
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Chi tiết đơn hàng</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Kiểm tra null cho Model.Showtime và Model.Showtime.Movie -->
+                    @if (Model != null && Model.Showtime != null && Model.Showtime.Movie != null)
+                    {
+                        <div class="d-flex mb-3">
+                            <img src="~/posters/@Model.Showtime.Movie.PosterUrl" alt="Movie Poster" style="width: 100px; height: auto; object-fit: cover;" class="me-3">
+                            <div>
+                                <h5>@Model.Showtime.Movie.Title</h5>
+                                <p class="mb-1"><strong>Thể loại:</strong> @Model.Showtime.Movie.Genre</p>
+                                <p class="mb-1"><strong>Thời lượng:</strong> @Model.Showtime.Movie.Duration phút</p>
+                                <p class="mb-1"><strong>Phòng:</strong> @(Model.Showtime.Room != null ? Model.Showtime.Room.Name : "N/A")</p>
+                                <p class="mb-1"><strong>Suất chiếu:</strong> @Model.Showtime.StartTime.ToString("HH:mm dd/MM/yyyy")</p>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="mb-3">
+                            <h6>Thông tin ghế:</h6>
+                            <div class="d-flex flex-wrap">
+                                @if (Model.SelectedSeats != null)
+                                {
+                                    @foreach (var seat in Model.SelectedSeats)
+                                    {
+                                        <span class="badge bg-info text-dark me-2 mb-2 p-2">@seat</span>
+                                    }
+                                }
+                                else
+                                {
+                                    <p>Không có ghế nào được chọn.</p>
+                                }
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between">
+                            <span>Số lượng vé:</span>
+                            <span>@(Model.SelectedSeats != null ? Model.SelectedSeats.Count : 0)</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Giá vé:</span>
+                            <span>85,000 VNĐ / vé</span>
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <span class="fw-bold">Tổng tiền:</span>
+                            <span class="fw-bold text-danger">@Model.TotalAmount.ToString("N0") VNĐ</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            Không tìm thấy thông tin phim hoặc suất chiếu.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Phương thức thanh toán</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="ProcessPayment">
+                        <input type="hidden" asp-for="ShowtimeId" />
+                        <input type="hidden" asp-for="TotalAmount" />
+                        <input type="hidden" asp-for="PaymentMethod" id="paymentMethodInput" value="Online" />
+
+                        <!-- Chuyển từ name="SelectedSeats" sang asp-for để binding đúng -->
+                        @if (Model.SelectedSeats != null)
+                        {
+                            @foreach (var seat in Model.SelectedSeats)
+                            {
+                                <input type="hidden" asp-for="SelectedSeats" value="@seat" />
+                            }
+                        }
+                        <div class="mb-3">
+                            <label class="form-label">Tên người dùng</label>
+                            <input type="text" class="form-control" asp-for="UserName" readonly />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" asp-for="Email" readonly />
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Phương thức thanh toán</label>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="PaymentMethod" id="pmOnline" value="Online" checked>
+                                <label class="form-check-label" for="pmOnline">
+                                    <i class="fas fa-credit-card me-2"></i>Thanh toán online
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="PaymentMethod" id="pmCounter" value="Counter">
+                                <label class="form-check-label" for="pmCounter">
+                                    <i class="fas fa-money-bill-wave me-2"></i>Thanh toán tại quầy
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3" id="onlinePaymentOptions">
+                            <div class="card mb-2 p-2 payment-option">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentOption" id="opt1" value="opt1" checked>
+                                    <label class="form-check-label d-flex align-items-center" for="opt1">
+                                        <img src="~/images/payment-momo.png" alt="MoMo" width="40" class="me-2">
+                                        Ví MoMo
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="card mb-2 p-2 payment-option">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentOption" id="opt2" value="opt2">
+                                    <label class="form-check-label d-flex align-items-center" for="opt2">
+                                        <img src="~/images/payment-vnpay.png" alt="VNPay" width="40" class="me-2">
+                                        VNPay
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="card p-2 payment-option">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentOption" id="opt3" value="opt3">
+                                    <label class="form-check-label d-flex align-items-center" for="opt3">
+                                        <img src="~/images/payment-zalopay.png" alt="ZaloPay" width="40" class="me-2">
+                                        ZaloPay
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-action="Book" asp-route-showtimeId="@Model.ShowtimeId" class="btn btn-secondary">
+                                ❌ Quay lại
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                💰 Xác nhận thanh toán
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .payment-option {
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid #dee2e6;
+    }
+
+        .payment-option:hover {
+            border-color: #0d6efd;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .payment-option input:checked + label {
+            font-weight: bold;
+        }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Xử lý hiển thị/ẩn các phương thức thanh toán online
+        const onlineRadio = document.getElementById('pmOnline');
+        const counterRadio = document.getElementById('pmCounter');
+        const onlineOptions = document.getElementById('onlinePaymentOptions');
+        const paymentMethodInput = document.getElementById('paymentMethodInput');
+
+        function togglePaymentOptions() {
+            onlineOptions.style.display = onlineRadio.checked ? 'block' : 'none';
+            // Cập nhật giá trị cho input ẩn
+            paymentMethodInput.value = onlineRadio.checked ? 'Online' : 'Counter';
+        }
+
+        onlineRadio.addEventListener('change', togglePaymentOptions);
+        counterRadio.addEventListener('change', togglePaymentOptions);
+
+        // Thêm sự kiện click cho các card payment-option
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.addEventListener('click', function () {
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+            });
+        });
+
+        // Gọi ngay lúc trang tải để thiết lập trạng thái ban đầu
+        togglePaymentOptions();
+    });
+</script>
+@if (ViewBag.IsDevEnvironment == true || true) 
+{
+    <div class="mt-3 p-2 border rounded bg-light">
+        <p class="text-muted mb-2">Chỉ dùng để test trong môi trường phát triển:</p>
+        <a href="@Url.Action("SimulatePaymentSuccess", "Ticket", new { showtimeId = Model.ShowtimeId, selectedSeats = string.Join(",", Model.SelectedSeats), totalAmount = Model.TotalAmount })" class="btn btn-sm btn-warning">
+            Giả lập thanh toán thành công
+        </a>
+    </div>
+}

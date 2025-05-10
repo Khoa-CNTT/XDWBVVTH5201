@@ -1,0 +1,63 @@
+﻿@model IEnumerable<CinemaTest.Models.Admin.Movie>
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Danh sách Phim";
+}
+
+<h2 class="text-center mb-4">🎬 Danh sách Phim</h2>
+
+<div class="text-end mb-3">
+    <a asp-action="Create" class="btn btn-success">➕ Thêm Phim Mới</a>
+</div>
+
+<table class="table table-bordered table-striped shadow-sm">
+    <thead class="table-dark text-center">
+        <tr>
+            <th>🖼️ Poster</th>
+            <th>🎬 Tên phim</th>
+            <th>📂 Thể loại</th>
+            <th>⏱️ Thời lượng</th>
+            <th>⚙️ Hành động</th>
+        </tr>
+    </thead>
+    <tbody class="text-center">
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="5" class="text-muted">Không có phim nào.</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var movie in Model)
+            {
+                <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(movie.PosterUrl))
+                        {
+                            <img src="~/posters/@movie.PosterUrl" alt="Poster" style="height: 80px;" class="rounded shadow-sm" />
+                        }
+                        else
+                        {
+                            <span class="text-muted fst-italic">Không có</span>
+                        }
+                    </td>
+                    <td>@movie.Title</td>
+                    <td>@movie.Genre</td>
+                    <td>@movie.Duration phút</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@movie.Id" class="btn btn-sm btn-warning">✏️</a>
+                        <a asp-action="Delete" asp-route-id="@movie.Id" class="btn btn-sm btn-danger">🗑️</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
